@@ -1,16 +1,16 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
 import {MysqlDataSource} from '../datasources';
-import {EmailNotifiction, EmailNotifictionRelations} from '../models';
+import {EmailNotification, EmailNotificationRelations} from '../models';
 
-export class EmailNotifictionRepository extends DefaultCrudRepository<
-  EmailNotifiction,
-  typeof EmailNotifiction.prototype.id,
-  EmailNotifictionRelations
+export class EmailNotificationRepository extends DefaultCrudRepository<
+  EmailNotification,
+  typeof EmailNotification.prototype.id,
+  EmailNotificationRelations
 > {
   constructor(
     @inject('datasources.mysql') dataSource: MysqlDataSource,
   ) {
-    super(EmailNotifiction, dataSource);
+    super(EmailNotification, dataSource);
   }
 }

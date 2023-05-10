@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class EmailNotifiction extends Entity {
+export class EmailNotification extends Entity {
   @property({
     type: 'number',
     id: true,
@@ -41,9 +41,9 @@ export class EmailNotifiction extends Entity {
 
   @property({
     type: 'date',
-    required: true,
+    required: false,
   })
-  dateSent: string;
+  dateSent?: string;
 
   @property({
     type: 'boolean',
@@ -52,13 +52,13 @@ export class EmailNotifiction extends Entity {
   sent?: boolean;
 
 
-  constructor(data?: Partial<EmailNotifiction>) {
+  constructor(data?: Partial<EmailNotification>) {
     super(data);
   }
 }
 
-export interface EmailNotifictionRelations {
+export interface EmailNotificationRelations {
   // describe navigational properties here
 }
 
-export type EmailNotifictionWithRelations = EmailNotifiction & EmailNotifictionRelations;
+export type EmailNotificationWithRelations = EmailNotification & EmailNotificationRelations;

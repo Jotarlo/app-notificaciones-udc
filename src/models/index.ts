@@ -1,3 +1,4 @@
 
-export * from './email-notifiction.model';
+export * from './email-notification.model';
 export * from './sms-notification.model';
+

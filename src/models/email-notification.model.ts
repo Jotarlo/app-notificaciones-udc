@@ -11,9 +11,9 @@ export class EmailNotification extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
-  from: string;
+  from?: string;
 
   @property({
     type: 'string',
@@ -40,7 +40,7 @@ export class EmailNotification extends Entity {
   messageContent: string;
 
   @property({
-    type: 'date',
+    type: 'string',
     required: false,
   })
   dateSent?: string;
@@ -50,6 +50,12 @@ export class EmailNotification extends Entity {
     default: false,
   })
   sent?: boolean;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  securityHash?: string;
 
 
   constructor(data?: Partial<EmailNotification>) {

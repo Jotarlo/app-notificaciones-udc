@@ -2,7 +2,7 @@
 
 import {service} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {getModelSchemaRef, post, requestBody, response} from '@loopback/rest';
+import {HttpErrors, getModelSchemaRef, post, requestBody, response} from '@loopback/rest';
 import {EmailNotification} from '../models';
 import {EmailNotificationRepository} from '../repositories';
 import {NotificationService} from '../services';
@@ -19,7 +19,7 @@ export class NotificationController {
   ) { }
 
 
-  @post('/cliente')
+  @post('/send-email')
   @response(200, {
     description: 'Email notification',
     content: {'application/json': {schema: getModelSchemaRef(EmailNotification)}},
@@ -37,14 +37,25 @@ export class NotificationController {
     })
     email: Omit<EmailNotification, 'id'>,
   ): Promise<EmailNotification> {
-    // try y catch
-
-    // agregar fecha y estado
-
-    // enviar con el servicio
-
-    // guardar en BD
-    return this.emailNotificationRepository.create(email);
+    try {
+      let securityHash = process.env.SENDGRID_SENDER;
+      if (securityHash === process.env.SECURITY_HASH) {
+        let emailFrom = process.env.SENDGRID_SENDER;
+        email.from = emailFrom;
+        // enviar con el servicio
+        let emailSent = await this.notificationService.SendEmailNotification(email);
+        // agregar fecha y estado
+        email.dateSent = `${new Date()}`;
+        email.sent = emailSent;
+        // guardar en BD
+        return this.emailNotificationRepository.create(email);
+      } else {
+        throw new HttpErrors[401]("Email sender not available.")
+      }
+    } catch (err: any) {
+      console.log(err);
+      throw new HttpErrors[500]("Email error sending to " + email.to);
+    }
   }
 
 

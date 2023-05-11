@@ -10,20 +10,17 @@ export class NotificationService {
    * Add service methods here
    */
 
-  SendEmailNotification(data: EmailNotification) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+  async SendEmailNotification(data: EmailNotification): Promise<boolean> {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
-      to: 'recipient@example.org',
-      from: 'sender@example.org',
-      subject: 'Hello world',
-      text: 'Hello plain world!',
-      html: '<p>Hello HTML world!</p>',
-      templateId: 'd-f43daeeaef504760851f727007e0b5d0',
+      to: data.to,
+      from: data.from,
+      templateId: 'd-ab08e0a808c84cf5bf8c76fa69139fe2',
       dynamic_template_data: {
-        subject: 'Testing Templates & Stuff',
-        name: 'Some "Testing" One',
-        city: '<b>Denver<b>',
+        subject: data.subject,
+        name: data.toName,
+        content: data.messageContent,
       },
     };
 
@@ -46,14 +43,16 @@ export class NotificationService {
      *
      */
 
-    sgMail
+    return await sgMail
       .send(msg)
       .then((response: any) => {
-        console.log(response[0].statusCode)
-        console.log(response[0].headers)
+        console.log(response[0].statusCode);
+        console.log(response[0].headers);
+        return true;
       })
       .catch((error: any) => {
-        console.error(error)
-      })
+        console.error(error);
+        return false;
+      });
   }
 }

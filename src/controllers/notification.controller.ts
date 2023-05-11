@@ -38,8 +38,10 @@ export class NotificationController {
     email: Omit<EmailNotification, 'id'>,
   ): Promise<EmailNotification> {
     try {
-      let securityHash = process.env.SENDGRID_SENDER;
-      if (securityHash === process.env.SECURITY_HASH) {
+      let securityHash = process.env.SECURITY_HASH;
+      console.log(securityHash)
+      console.log(email.securityHash)
+      if (email.securityHash == securityHash) {
         let emailFrom = process.env.SENDGRID_SENDER;
         email.from = emailFrom;
         // enviar con el servicio
@@ -50,7 +52,7 @@ export class NotificationController {
         // guardar en BD
         return this.emailNotificationRepository.create(email);
       } else {
-        throw new HttpErrors[401]("Email sender not available.")
+        throw new HttpErrors[401]("Email sender not available.");
       }
     } catch (err: any) {
       console.log(err);

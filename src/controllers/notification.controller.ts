@@ -39,16 +39,29 @@ export class NotificationController {
   ): Promise<EmailNotification> {
     try {
       let securityHash = process.env.SECURITY_HASH;
-      console.log(securityHash)
-      console.log(email.securityHash)
       if (email.securityHash == securityHash) {
-        let emailFrom = process.env.SENDGRID_SENDER;
-        email.from = emailFrom;
+        //let emailFrom = process.env.SENDGRID_SENDER;
         // enviar con el servicio
-        let emailSent = await this.notificationService.SendEmailNotification(email);
+        let emailSent = false;
+        switch (email.emailServiceProvider) {
+          case "SG":
+            emailSent = await this.notificationService.SendEmailNotificationThroughSG(email);
+            break;
+
+          case "AWS":
+            emailSent = await this.notificationService.SendEmailNotificationThroughAWS(email);
+            break;
+          default:
+            console.log("-----------------------------------------------");
+            console.log("Mensaje no enviado para: ");
+            console.log(email);
+            console.log("-----------------------------------------------");
+        }
         // agregar fecha y estado
         email.dateSent = `${new Date()}`;
         email.sent = emailSent;
+        email.sentError = false;
+        email.responseData = "OK";
         // guardar en BD
         return this.emailNotificationRepository.create(email);
       } else {

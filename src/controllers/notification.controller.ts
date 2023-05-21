@@ -2,7 +2,7 @@
 
 import {service} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {HttpErrors, getModelSchemaRef, post, requestBody, response} from '@loopback/rest';
+import {HttpErrors, get, getModelSchemaRef, post, requestBody, response} from '@loopback/rest';
 import {EmailNotification} from '../models';
 import {EmailNotificationRepository} from '../repositories';
 import {NotificationService} from '../services';
@@ -18,6 +18,12 @@ export class NotificationController {
     private emailNotificationRepository: EmailNotificationRepository
   ) { }
 
+  @get('/create-aws-ses-template')
+  @response(200)
+  createTemplate(): boolean {
+    // Reply with a greeting, the current time, the url, and request headers
+    return this.notificationService.CreateSesAwsTemplate();
+  }
 
   @post('/send-email')
   @response(200, {
@@ -40,8 +46,7 @@ export class NotificationController {
     try {
       let securityHash = process.env.SECURITY_HASH;
       if (email.securityHash == securityHash) {
-        //let emailFrom = process.env.SENDGRID_SENDER;
-        // enviar con el servicio
+
         let emailSent = false;
         switch (email.emailServiceProvider) {
           case "SG":

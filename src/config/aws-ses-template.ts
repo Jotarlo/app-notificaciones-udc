@@ -181,7 +181,7 @@ export namespace AwsSesTemplateConfiguration {
                                                                  <tbody>
                                                                     <tr role="module-content">
                                                                        <td height="100%" valign="top" align="center">
-                                                                          Hola {{{name}}},
+                                                                          Hola {{{name}}},<br />
                                                                        </td>
                                                                     </tr>
                                                                     <tr role="module-content">

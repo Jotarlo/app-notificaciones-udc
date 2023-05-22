@@ -68,7 +68,7 @@ export class NotificationService {
         region: 'us-east-1'
       });
 
-      const ses = new AWS.SES();
+      const ses = new AWS.SES({apiVersion: '2010-12-01'});
 
       const params = {
         Source: `${data.fromName} <${data.from}>`,
@@ -77,7 +77,7 @@ export class NotificationService {
         Destination: {
           ToAddresses: [data.to]
         },
-        TemplateData: `{ \"subject\":\"${data.subject}\", \"name\": \"${data.toName}\", \"content\":\"${data.messageContent}\" }`
+        TemplateData: `{ "subject":"${data.subject}", "name": "${data.toName}", "content":"${data.messageContent}" }`
       }
 
       ses.sendTemplatedEmail(params, (err: any, data: any) => {

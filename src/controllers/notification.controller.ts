@@ -44,11 +44,11 @@ export class NotificationController {
     email: Omit<EmailNotification, 'id'>,
   ): Promise<EmailNotification> {
     try {
+      // ALTER TABLE emailnotification MODIFY messageContent varchar(5000)
       console.log("Llegó solicitud");
       console.log(email);
       let securityHash = process.env.SECURITY_HASH;
       if (email.securityHash == securityHash) {
-
         let emailSent = false;
         switch (email.emailServiceProvider) {
           case "SG":
@@ -75,7 +75,7 @@ export class NotificationController {
         throw new HttpErrors[401]("Email sender not available.");
       }
     } catch (err: any) {
-      console.log(err);
+      //console.log(err);
       throw new HttpErrors[500]("Email error sending to " + email.to);
     }
   }

@@ -60,7 +60,7 @@ export class NotificationService {
    * @param data datos para el envío del email
    * @returns boolean con el resultado del envío
    */
-  SendEmailNotificationThroughAWS(data: EmailNotification): boolean {
+  SendEmailNotificationThroughAWS(data: EmailNotification, attempNumber: number): boolean {
     try {
       AWS.config.update({
         accessKeyId: process.env.AWS_SES_ACCESS_KEY,
@@ -86,8 +86,14 @@ export class NotificationService {
       });
       return true;
     } catch (err) {
-      console.log(err);
-      return false;
+      console.error(err);
+      data.responseData = err;
+      data.sentError = true;
+      this.emailNotificationRepository.create(data);
+      if (attempNumber == 1) {
+        this.SendEmailNotificationThroughSG(data, 2);
+      }
+      throw err;
     }
   }
 
@@ -97,7 +103,7 @@ export class NotificationService {
    * @param data datos para el envío del email
    * @returns boolean con el resultado del envío
    */
-  async SendEmailNotificationThroughSG(data: EmailNotification): Promise<boolean> {
+  async SendEmailNotificationThroughSG(data: EmailNotification, attempNumber: number): Promise<boolean> {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
@@ -126,6 +132,9 @@ export class NotificationService {
         data.responseData = error;
         data.sentError = true;
         this.emailNotificationRepository.create(data);
+        if (attempNumber == 1) {
+          this.SendEmailNotificationThroughAWS(data, 2);
+        }
         throw error;
       });
   }

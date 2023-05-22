@@ -44,17 +44,19 @@ export class NotificationController {
     email: Omit<EmailNotification, 'id'>,
   ): Promise<EmailNotification> {
     try {
+      console.log("Llegó solicitud");
+      console.log(email);
       let securityHash = process.env.SECURITY_HASH;
       if (email.securityHash == securityHash) {
 
         let emailSent = false;
         switch (email.emailServiceProvider) {
           case "SG":
-            emailSent = await this.notificationService.SendEmailNotificationThroughSG(email);
+            emailSent = await this.notificationService.SendEmailNotificationThroughSG(email, 1);
             break;
 
           case "AWS":
-            emailSent = await this.notificationService.SendEmailNotificationThroughAWS(email);
+            emailSent = await this.notificationService.SendEmailNotificationThroughAWS(email, 1);
             break;
           default:
             console.log("-----------------------------------------------");
@@ -77,6 +79,4 @@ export class NotificationController {
       throw new HttpErrors[500]("Email error sending to " + email.to);
     }
   }
-
-
 }

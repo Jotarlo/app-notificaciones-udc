@@ -1,15 +1,28 @@
+import * as fs from 'fs';
+import * as https from 'https';
 import {App, ApplicationConfig} from './application';
 
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
   const app = new App(options);
+
+  const httpsOptions = {
+    key: fs.readFileSync('./ssl/wildcard2020_sinclave.key'),
+    cert: fs.readFileSync('./ssl/wildcard2022.crt'),
+  };
+
+  const httpsServer = https.createServer(httpsOptions, app.requestHandler);
+  httpsServer.listen(app.restServer.config.port, () => {
+    console.log(`HTTPS server listening on port ${app.restServer.config.port}`);
+  });
+
   await app.boot();
-  await app.start();
+  /*await app.start();
 
   const url = app.restServer.url;
   console.log(`Server is running at ${url}`);
-  console.log(`Try ${url}/ping`);
+  console.log(`Try ${url}/ping`);*/
 
   return app;
 }
